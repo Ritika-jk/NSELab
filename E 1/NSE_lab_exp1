@@ -1,5 +1,5 @@
 def caesar_cipher_encrypt(pt, k):
-    """Encrypt using Caesar Cipher"""
+
     ct = ""
     for i in range(len(pt)):
         if pt[i] == " ":
@@ -13,7 +13,7 @@ def caesar_cipher_encrypt(pt, k):
     return ct
 
 def caesar_cipher_decrypt(ct, k):
-    """Decrypt using Caesar Cipher"""
+    
     pt = ""
     for i in range(len(ct)):
         if ct[i] == " ":
@@ -27,7 +27,7 @@ def caesar_cipher_decrypt(ct, k):
     return pt
 
 def vigenere_cipher_encrypt(pt, key):
-    """Encrypt using Vigenère Cipher"""
+    
     ct = ""
     key = key.upper()
     key_index = 0
@@ -36,7 +36,7 @@ def vigenere_cipher_encrypt(pt, key):
         if pt[i] == " ":
             ct += " "
         elif pt[i].isalpha():
-            # Convert character to 0-25 range
+            
             if pt[i].isupper():
                 base = 65
                 char_num = ord(pt[i]) - base
@@ -53,7 +53,7 @@ def vigenere_cipher_encrypt(pt, key):
     return ct
 
 def vigenere_cipher_decrypt(ct, key):
-    """Decrypt using Vigenère Cipher"""
+ 
     pt = ""
     key = key.upper()
     key_index = 0
@@ -62,7 +62,7 @@ def vigenere_cipher_decrypt(ct, key):
         if ct[i] == " ":
             pt += " "
         elif ct[i].isalpha():
-            # Convert character to 0-25 range
+            
             if ct[i].isupper():
                 base = 65
                 char_num = ord(ct[i]) - base
@@ -87,7 +87,7 @@ def main():
     
     choice = input("\nEnter your choice (1-4): ")
     
-    # Switch case using if-else
+    
     if choice == "1":
         # Caesar Encryption
         pt = input("Enter the plaintext: ")
@@ -103,14 +103,14 @@ def main():
         print(f"The plaintext is: {pt}")
         
     elif choice == "3":
-        # Vigenère Encryption
+        # Vigenre Encryption
         pt = input("Enter the plaintext: ")
         key = input("Enter the key (alphabetic): ")
         ct = vigenere_cipher_encrypt(pt, key)
         print(f"The ciphertext is: {ct}")
         
     elif choice == "4":
-        # Vigenère Decryption
+        # Vigenre Decryption
         ct = input("Enter the ciphertext: ")
         key = input("Enter the key (alphabetic): ")
         pt = vigenere_cipher_decrypt(ct, key)
@@ -119,6 +119,6 @@ def main():
     else:
         print("Invalid choice! Please select 1-4.")
 
-# Run the program
+
 if __name__ == "__main__":
     main()
