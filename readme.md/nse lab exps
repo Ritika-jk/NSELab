@@ -1,0 +1,74 @@
+Experiment04 – Generate and Verify X.509 Self-Signed Digital Certificate
+Create a self-signed X.509 certificate using OpenSSL and inspect its structure and use in secure communications. In this experiment, I created 2048-bit RSA private key and a self-signed X.509 certificate using OpenSSL and the certificate details, extensions, and Subject Alternative Names (SANs) were also configured and verified to understand the structure of a digital certificate.
+
+“Self-signed” means that the certificate is issued and signed by the same entity (us), not by an external CA.
+
+1.Generated a 2048-bit RSA Private Key
+
+Command used: openssl genpkey -algorithm RSA -out private.key -pkeyopt rsa_keygen_bits:2048 This creates the private key used for signing the certificate.
+
+2.Created a Self-Signed Certificate (cert.pem)
+
+Command: openssl req -new -x509 -key private.key -out cert.pem -days 365 -subj "C=US/ST=State/L=City/O=Org/OU=Dept/CN=example.local" The certificate subject fields (Country, State, Org, CN) were added. I also configured Subject Alternative Names (SAN) in the nano config file (DNS and IP entries).
+
+3.Viewed and Verified Certificate Details Command: openssl x509 -in cert.pem -text -noout This displays certificate validity, public key, signature algorithm, and SAN details — confirming the certificate was generated correctly.
+
+4.Checked Certificate Fingerprint & Converted to DER
+
+(i) SHA-256 fingerprint: openssl x509 -in cert.pem -noout -fingerprint -sha256 (ii) Exported DER format: openssl x509 -in cert.pem -outform der -out cert.der DER is required by some systems like Windows and Java.
+
+5.Used the Certificate in an HTTPS Test Server
+
+Using OpenSSL’s s_server: openssl s_server -cert cert.pem -key private.key -accept 8443 -WWW This starts a temporary HTTPS server using the self-signed certificate. A Python SSL server example was also tested on port 4443.
+
+6.Exported Certificate as PKCS12 (.pfx)
+
+Command: openssl pkcs12 -export -out cert.pfx -inkey private.key -in cert.pem -password pass:yourpassword A .pfx file is used in Windows, browsers, and IIS for importing certificates.
+
+Open PDF
+
+Experiment05 – TLS Handshake using Wireshark
+In this experiment, I used wireshark to capture and analyze the TLS handshake that occurs during an HTTPS connection. The goal was to understand how a client and server negotiate security parameters before encrypted communication begins.
+
+Key Observations:
+(i) The ClientHello packet showed supported TLS versions, cipher suites, and extensions. (ii) The ServerHello packet selected the TLS version and cipher suite to be used. (iii) The server then sent its digital certificate for authentication. (iv) Key Exchange messages were exchanged to generate shared session keys. (v) Change Cipher Spec and Finished packets indicated the start of encrypted communication.
+
+Wireshark observation(analysis): (i) The ClientHello packet showed supported TLS versions, cipher suites, and extensions. (ii) The ServerHello packet selected the TLS version and cipher suite and started session negotiation. (iii) The server sent its digital certificate, which was visible in Wireshark for verification. (iv) Key Exchange messages were exchanged to derive shared session keys. (v) Change Cipher Spec and Finished packets indicated that encrypted communication had begun.
+
+Open PDF
+
+##Experiment06 - Establish Secure Remote Login using SSH Demonstrate secure remote server access using SSH with password and key-based authentication.
+
+In this experiment,I used SSH (Secure Shell) to establish secure remote login session. We performed both password-based authentication and key-based authentication to understand how SSH protects remote access through encryption and strong identity verification.
+
+Key Observations:
+(i) The SSH server status was checked and enabled using systemctl commands. The logs confirm that the SSH service was active and listening on port 22. (ii) A remote login was successfully established using SSH with a username and password (connection to 127.0.0.1 shown in the capture). (iii) An RSA key pair (2048-bit) was generated using ssh-keygen, and the public key was added to the authorized_keys file. (iv) SSH login was then performed using the private key, demonstrating secure key-based authentication without entering the password. (v) The experiment confirms how SSH ensures secure, encrypted, and authenticated remote access.
+
+Open PDF
+
+##Experiment07 - Analyze WPA2 Wireless Security and Capture Handshake with Wireshark Capture and analyze the WPA2 4-way handshake process using Wireshark to understand secure wireless communication.
+
+In this experiment, the wireless interface was placed into monitor mode to observe WPA2 network traffic. Using airodump-ng, aireplay-ng, and Wireshark, we captured the WPA2 4-way handshake and analyzed it to understand how secure wireless connections are established.
+
+Key Observations:
+(i) The wireless adapter was switched to monitor mode to enable raw packet capture. (ii) Nearby Wi-Fi networks and connected clients were scanned using airodump-ng. (iii) Deauthentication frames were sent to force the client to reconnect, triggering the WPA2 handshake. (iv) The WPA2 4-way handshake (EAPOL messages 1 to 4) was successfully captured during client re-authentication. (v) The captured handshake was saved as a .cap file and converted into HCCAPX format for further security analysis.
+
+Open PDF
+
+##Experiment08 - Send and Receive PGP Encrypted Email using Thunderbird Use Thunderbird and PGP to securely send and receive encrypted and digitally signed emails.
+
+In this experiment, We used Thunderbird’s OpenPGP feature to generate key pairs, exchange public keys, and send encrypted and digitally signed messages. The objective was to understand how PGP ensures confidentiality, authenticity, and integrity in email communication.
+
+Key Observations:
+(i) A PGP key pair was generated using Thunderbird’s OpenPGP Key Manager. (ii) The public key was exported and shared so that the recipient could encrypt messages. (iii) Thunderbird’s account settings were configured to enable end-to-end encryption using OpenPGP. (iv) An email was composed with encryption and digital signing enabled. (v) The recipient successfully received and decrypted the encrypted email, confirming secure PGP-based communication.
+
+Open PDF
+
+##Experiment09 - Configure and Analyze IPsec VPN in Tunnel Mode Set up an IPsec VPN in tunnel mode and analyze encrypted packet flow to understand secure VPN communication.
+
+In this experiment, an IPsec VPN was configured between two hosts using strongSwan. Tunnel mode was used to encrypt traffic between private subnets, ensuring confidentiality and integrity during communication.
+
+Key Observations:
+(i) The IPsec configuration files (/etc/ipsec.conf and /etc/ipsec.secrets) were edited to define tunnel mode parameters, including left/right IPs, subnets, and authentication keys. (ii) IKEv2 was used as the key exchange method along with strong encryption algorithms (AES256, SHA256, and MODP2048). (iii) The VPN connection was initiated, and Security Associations (SAs) were successfully established. (iv) Encapsulated packets (ESP) were observed, showing that traffic between the two private networks was encrypted inside the IPsec tunnel. (v) Ping tests between hosts confirmed that communication passed securely through the IPsec tunnel.
+
+Open PDF
