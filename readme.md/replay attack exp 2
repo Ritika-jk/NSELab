@@ -1,0 +1,44 @@
+import hashlib
+import random
+import time
+
+SECRET_KEY = "mysecret123"
+USED_NONCES = set()
+
+def generate_challenge():
+    challenge = str(random.randint(1000, 9999))
+    timestamp = int(time.time())
+    return challenge, timestamp
+
+def compute_response(challenge: str, secret: str) -> str:
+    """Compute a hex digest response from challenge + secret using SHA-256."""
+    data = challenge + secret
+    return hashlib.sha256(data.encode()).hexdigest()
+
+def verify_response(challenge: str, response: str, timestamp: int) -> str:
+    """Verify response and detect replay using USED_NONCES."""
+    if challenge in USED_NONCES:
+        return f"Replay attack detected! (challenge issued at {time.ctime(timestamp)})"
+    expected = compute_response(challenge, SECRET_KEY)
+    if response == expected:
+        USED_NONCES.add(challenge)
+        return "Verification successful: response matches expected value."
+    else:
+        return "Verification failed: response does not match expected value."
+
+def main():
+    challenge, ts = generate_challenge()
+    print(f"Server challenge: {challenge} (issued at: {time.ctime(ts)})\n")
+
+    user_secret = input("Enter your secret key: ").strip()
+    client_response = compute_response(challenge, user_secret)
+    print("Client response:", client_response, "\n")
+
+    print("Server verification:", verify_response(challenge, client_response, ts))
+
+    print("\n--- Replay Attack Simulation ---")
+    time.sleep(1)
+    print(f"Replay attempt at {time.ctime()} -->", verify_response(challenge, client_response, ts))
+
+if __name__ == "__main__":
+    main()
